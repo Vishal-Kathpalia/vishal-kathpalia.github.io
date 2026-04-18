@@ -5,7 +5,7 @@ Built from scratch with vanilla HTML, CSS, and JavaScript — no frameworks, no 
 
 ## Live
 
-- [vishal-kathpalia.github.io](https://vishal-kathpalia.github.io/)
+- [vishalkathpalia.github.io](https://vishalkathpalia.github.io/)
 - [vishalkathpalia.qzz.io](https://vishalkathpalia.qzz.io/)
 
 ## Sections
