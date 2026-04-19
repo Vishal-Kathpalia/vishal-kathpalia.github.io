@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vishal-kathpalia.github.io/sitemap.xml

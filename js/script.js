@@ -788,7 +788,7 @@ document.querySelectorAll('.btn').forEach(btn => {
       addLine('   \u{1F4E7} vishalkathpalia0@gmail.com');
       addLine('   \u{1F517} linkedin.com/in/vishalkathpalia');
       addLine('   \u{1F431} github.com/Er-Vishal-Kathpalia');
-      addLine('   \u{1F310} vishalkathpalia.github.io');
+      addLine('   \u{1F310} vishal-kathpalia.github.io');
       addLine('   \u{1F4CD} Bengaluru, India');
       addLine('   \u{1F7E2} Open to opportunities');
       addLine('');
@@ -799,7 +799,7 @@ document.querySelectorAll('.btn').forEach(btn => {
       addLine('');
       addLine('   LinkedIn   \u2192  linkedin.com/in/vishalkathpalia');
       addLine('   GitHub     \u2192  github.com/Er-Vishal-Kathpalia');
-      addLine('   Website    \u2192  vishalkathpalia.github.io');
+      addLine('   Website    \u2192  vishal-kathpalia.github.io');
       addLine('   Instagram  \u2192  instagram.com/_vishal_kathpalia');
       addLine('   Snapchat   \u2192  snapchat.com/add/kathpaliavishal');
       addLine('   Facebook   \u2192  facebook.com/ervishalkathpalia');
