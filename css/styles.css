@@ -2762,6 +2762,19 @@ a.contact-info-value:hover {
   gap: 6px;
 }
 
+.code-editor-dots .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.code-editor-dots .dot::after {
+  display: none;
+}
+
 .code-editor-filename {
   font-family: var(--font-mono);
   font-size: 0.75rem;
