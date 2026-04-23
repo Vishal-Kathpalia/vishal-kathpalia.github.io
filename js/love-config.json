@@ -1,0 +1,50 @@
+{
+  "command": "prerna",
+  "name": "Prerna",
+  "photo": "images/prerna.jpg",
+  "photoTag": "♥",
+  "introCommands": [
+    "lookup prerna --result extraordinary",
+    "git commit -m \"lost to a chartered accountant\"",
+    "ping composure --near prerna --status failed",
+    "sudo explain prerna --error words_insufficient"
+  ],
+  "taglinePrefix": "She ",
+  "taglinePhrases": [
+    "turns balance sheets into poetry.",
+    "makes precision look effortless.",
+    "carries quiet grace that stops rooms.",
+    "balances worlds without breaking a sweat.",
+    "walks in and rewrites every equation."
+  ],
+  "description": "Future Chartered Accountant — the kind of person who commands respect in a boardroom and steals your composure with a single glance. Sharp mind, sharper instincts, and a presence that makes you forget what you were about to say.",
+  "ctaPrimary": "Read My Heart",
+  "ctaSecondary": "Things I Never Said",
+  "greeting": [
+    "wait... {name}? 👀",
+    "hold on, decrypting something...",
+    "this has been in my heart's cache for a while ✨"
+  ],
+  "terminal": {
+    "decryptCmd": "decrypt --key \"💜\" --target feelings.vault",
+    "authMsg": "authenticating heartbeat...",
+    "identityMsg": "identity locked on: {name}",
+    "decryptingLabel": "decrypting",
+    "doneMsg": "decryption complete",
+    "secretLine1": "confession = \"the thing I never said out loud\";",
+    "secretLine2": "shootMyShot(confession); // 🚀"
+  },
+  "message": "Some people walk into your life and rearrange every priority you thought you had. You did that — without trying, without knowing, without permission.",
+  "from": "— from someone still learning how to say your name without smiling",
+  "hint": "each one holds something I never said out loud",
+  "cardBtnText": "close 💜",
+  "notes": [
+    "you carry yourself like someone who already knows her worth — and it's magnetic",
+    "I rehearsed saying hi forty-seven times and still almost forgot how words work",
+    "you walked in and even my playlist switched to love songs on its own",
+    "the way you focus when you work — I could watch that quiet intensity forever",
+    "my friends are tired of hearing about you, but I physically cannot stop",
+    "you make ambition look graceful and I haven't recovered since"
+  ],
+  "bubbleEmojis": ["💜", "✨", "🎵", "🤍", "💫", "🫧"]
+}

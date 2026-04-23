@@ -62,7 +62,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=13">
+  <link rel="stylesheet" href="css/styles.css?v=20">
 </head>
 <body>
 
@@ -1054,6 +1054,79 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=12"></script>
+  <!-- Love Mode Overlay (hidden, triggered via terminal) -->
+  <div class="love-overlay" id="loveOverlay">
+    <div class="love-bg"></div>
+    <canvas class="love-canvas" id="loveCanvas"></canvas>
+    <div class="love-ring"></div>
+    <div class="love-ring"></div>
+    <div class="love-ring"></div>
+    <div class="love-hearts" id="loveHearts"></div>
+    <div class="love-glow love-glow-1"></div>
+    <div class="love-glow love-glow-2"></div>
+    <div class="love-cursor-glow" id="loveCursorGlow"></div>
+
+    <div class="love-hero">
+      <!-- LEFT — Photo -->
+      <div class="love-hero-left">
+        <div class="love-photo-frame" id="lovePhotoWrap">
+          <span class="love-fc love-fc-tl"></span>
+          <span class="love-fc love-fc-tr"></span>
+          <span class="love-fc love-fc-bl"></span>
+          <span class="love-fc love-fc-br"></span>
+          <span class="love-fd love-fd-1"></span>
+          <span class="love-fd love-fd-2"></span>
+          <span class="love-fd love-fd-3"></span>
+          <span class="love-fl"></span>
+          <div class="love-photo-card" id="lovePhotoCard">
+            <div class="love-photo-card-border"></div>
+            <img class="love-photo-card-img" id="lovePhoto" src="" alt="" />
+            <div class="love-photo-card-overlay"></div>
+            <span class="love-photo-card-tag" id="lovePhotoTag"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT — Content -->
+      <div class="love-hero-right">
+        <div class="love-intro" id="loveIntro">
+          <span class="love-intro-prompt">~$</span>
+          <span class="love-intro-typed" id="loveIntroTyped"></span>
+          <span class="love-intro-cursor">|</span>
+        </div>
+        <h1 class="love-name" id="loveName"></h1>
+        <h2 class="love-tagline" id="loveTagline">
+          <span id="loveTaglinePrefix"></span><span class="love-typewriter" id="loveTypewriter"></span><span class="love-typewriter-cursor">|</span>
+        </h2>
+        <p class="love-description" id="loveDescription"></p>
+        <div class="love-cta" id="loveCta">
+          <button class="btn btn-primary magnetic love-cta-btn" id="loveCtaPrimary">
+            <span id="loveCtaPrimaryText"></span>
+            <svg class="love-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+          <button class="btn btn-outline magnetic love-cta-btn" id="loveCtaSecondary">
+            <span id="loveCtaSecondaryText"></span>
+            <svg class="love-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+        <p class="love-hint" id="loveHint"></p>
+        <div class="love-bubbles" id="loveBubbles"></div>
+      </div>
+    </div>
+
+    <div class="love-card-backdrop" id="loveCardDrop"></div>
+    <div class="love-card" id="loveCard">
+      <p class="love-card-text" id="loveCardText"></p>
+      <p class="love-card-from" id="loveCardFrom"></p>
+      <button class="love-card-btn magnetic" id="loveCardBtn"></button>
+    </div>
+    <button class="love-close magnetic" id="loveClose">✕</button>
+    <button class="love-theme-toggle magnetic" id="loveThemeToggle" aria-label="Toggle theme">
+      <svg class="love-theme-icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="love-theme-icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+
+  <script src="js/script.js?v=18"></script>
 </body>
 </html>

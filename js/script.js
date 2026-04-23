@@ -1,3 +1,6 @@
+// ===== Love Mode Config (fetched async, used by terminal) =====
+fetch('js/love-config.json').then(r => r.json()).then(c => { window.__loveConfig = c; }).catch(() => {});
+
 // ===== Loading Screen =====
 window.addEventListener('load', () => {
   setTimeout(() => {
@@ -2405,6 +2408,560 @@ document.querySelectorAll('.btn').forEach(btn => {
     }, 33); // ~30fps for smoother animation
   }
 
+  // ===== LOVE MODE (secret, triggered by configurable command) =====
+  let loveHeartsInterval = null;
+  let loveSparklesInterval = null;
+
+  function launchLoveMode(config) {
+    const name = config.name || 'You';
+    const t = config.terminal || {};
+    const greetings = config.greeting || [];
+
+    // Show greeting lines first (typewriter feel)
+    addLine('');
+    greetings.forEach((line, i) => {
+      setTimeout(() => {
+        addLine('   <span style="color:#bb9af7">' + line.replace('{name}', name) + '</span>', '');
+      }, i * 500);
+    });
+
+    const greetDelay = greetings.length * 500 + 300;
+
+    // Hacker-style decryption sequence in terminal
+    setTimeout(() => {
+      addLine('');
+      const cmd = (t.decryptCmd || 'decrypt --key "❤️" --target secret.vault').replace('{name}', name);
+      addLine('   <span style="color:#9ece6a">$</span> <span style="color:#7aa2f7">' + cmd + '</span>');
+    }, greetDelay);
+
+    setTimeout(() => {
+      const auth = (t.authMsg || 'authenticating...').replace('{name}', name);
+      addLine('   <span style="color:#565f89">[vault]</span> ' + auth, 'dim');
+    }, greetDelay + 600);
+
+    setTimeout(() => {
+      const id = (t.identityMsg || 'identity verified: {name}').replace('{name}', '<span style="color:#bb9af7">' + name + '</span>');
+      addLine('   <span style="color:#565f89">[vault]</span> ' + id, '');
+    }, greetDelay + 1200);
+
+    // Animated progress bar
+    let barTimer;
+    let barStep = 0;
+    const barTotal = 20;
+    let barLineEl = null;
+    const barLabel = (t.decryptingLabel || 'decrypting').replace('{name}', name);
+    setTimeout(() => {
+      const p = document.createElement('p');
+      p.className = 'terminal-line';
+      p.innerHTML = '   <span style="color:#565f89">[vault]</span> ' + barLabel + ' <span class="love-bar" style="color:#9ece6a">░░░░░░░░░░░░░░░░░░░░</span> <span class="love-pct" style="color:#565f89">0%</span>';
+      output.appendChild(p);
+      output.scrollTop = output.scrollHeight;
+      barLineEl = p;
+
+      barTimer = setInterval(() => {
+        barStep++;
+        const filled = '█'.repeat(barStep) + '░'.repeat(barTotal - barStep);
+        const pct = Math.round((barStep / barTotal) * 100);
+        barLineEl.innerHTML = '   <span style="color:#565f89">[vault]</span> ' + barLabel + ' <span style="color:#9ece6a">' + filled + '</span> <span style="color:#565f89">' + pct + '%</span>';
+        output.scrollTop = output.scrollHeight;
+        if (barStep >= barTotal) clearInterval(barTimer);
+      }, 80);
+    }, greetDelay + 1800);
+
+    // After bar completes
+    setTimeout(() => {
+      const done = (t.doneMsg || 'decryption complete').replace('{name}', name);
+      addLine('   <span style="color:#9ece6a">✓</span> <span style="color:#565f89">' + done + '</span>', '');
+    }, greetDelay + 3600);
+
+    setTimeout(() => {
+      addLine('');
+      const s1 = (t.secretLine1 || 'const secret = "something special, just for you";').replace('{name}', name);
+      addLine('   <span style="color:#bb9af7">const</span> <span style="color:#7aa2f7">' + s1 + '</span>', '');
+    }, greetDelay + 4100);
+
+    setTimeout(() => {
+      const s2 = (t.secretLine2 || 'await render(secret); // ✨').replace('{name}', name);
+      addLine('   <span style="color:#bb9af7">await</span> <span style="color:#7aa2f7">' + s2 + '</span>', '');
+      addLine('');
+    }, greetDelay + 4600);
+
+    // Hide terminal and launch overlay
+    setTimeout(() => {
+      hideTerminal();
+      setTimeout(() => activateLoveOverlay(config), 600);
+    }, greetDelay + 5200);
+  }
+
+  let loveCanvasAnim = null;
+
+  // Cursor glow state for overlay
+  let loveCursorRAF = null;
+  let loveMouseX = 0, loveMouseY = 0, loveGlowX = 0, loveGlowY = 0;
+  let loveIntroTimer = null;
+  let loveTaglineTimer = null;
+
+  function activateLoveOverlay(config) {
+    const overlayEl = document.getElementById('loveOverlay');
+    if (!overlayEl) return;
+
+    const name = config.name || 'You';
+    const photoFrame = document.getElementById('lovePhotoWrap');
+    const photoCard = document.getElementById('lovePhotoCard');
+    const photoEl = document.getElementById('lovePhoto');
+    const photoTag = document.getElementById('lovePhotoTag');
+    const nameEl = document.getElementById('loveName');
+    const introEl = document.getElementById('loveIntro');
+    const introTyped = document.getElementById('loveIntroTyped');
+    const taglineEl = document.getElementById('loveTagline');
+    const typewriterEl = document.getElementById('loveTypewriter');
+    const descEl = document.getElementById('loveDescription');
+    const ctaEl = document.getElementById('loveCta');
+    const ctaPrimary = document.getElementById('loveCtaPrimary');
+    const ctaSecondary = document.getElementById('loveCtaSecondary');
+    const hintEl = document.getElementById('loveHint');
+    const bubblesEl = document.getElementById('loveBubbles');
+    const cardEl = document.getElementById('loveCard');
+    const cardDrop = document.getElementById('loveCardDrop');
+    const cardText = document.getElementById('loveCardText');
+    const cardFrom = document.getElementById('loveCardFrom');
+    const cardBtn = document.getElementById('loveCardBtn');
+    const closeBtn = document.getElementById('loveClose');
+    const cursorGlow = document.getElementById('loveCursorGlow');
+    const themeToggleBtn = document.getElementById('loveThemeToggle');
+
+    // Theme toggle for love overlay
+    if (themeToggleBtn) {
+      themeToggleBtn.onclick = function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      };
+    }
+
+    // Photo
+    if (config.photo) {
+      photoEl.src = config.photo;
+      photoEl.alt = name;
+      photoFrame.style.display = '';
+    } else {
+      photoFrame.style.display = 'none';
+    }
+
+    // Photo badge tag
+    photoTag.textContent = config.photoTag || '';
+    photoTag.style.display = config.photoTag ? '' : 'none';
+
+    // Name
+    nameEl.textContent = name;
+
+    // Tagline prefix (configurable — e.g., "She " or "I ")
+    var prefixEl = document.getElementById('loveTaglinePrefix');
+    if (prefixEl) {
+      prefixEl.textContent = config.taglinePrefix != null ? config.taglinePrefix : 'She ';
+    }
+
+    // Clear typewriters
+    introTyped.textContent = '';
+    typewriterEl.textContent = '';
+
+    // Description — highlight "Chartered Accountant"
+    var descText = config.description || '';
+    descEl.innerHTML = descText.replace(/Chartered Accountant/g, '<span class="highlight">Chartered Accountant</span>');
+
+    // Hint
+    hintEl.textContent = config.hint || '';
+
+    // CTA text
+    document.getElementById('loveCtaPrimaryText').textContent = config.ctaPrimary || 'Read My Heart';
+    document.getElementById('loveCtaSecondaryText').textContent = config.ctaSecondary || 'My Confessions';
+
+    // Card button
+    cardBtn.textContent = config.cardBtnText || 'close';
+
+    // ── Cursor glow ──
+    if (window.innerWidth >= 768 && cursorGlow) {
+      loveGlowX = window.innerWidth / 2;
+      loveGlowY = window.innerHeight / 2;
+
+      overlayEl._onMouseMove = function(e) {
+        loveMouseX = e.clientX;
+        loveMouseY = e.clientY;
+      };
+      overlayEl.addEventListener('mousemove', overlayEl._onMouseMove);
+
+      function animateLoveGlow() {
+        loveGlowX += (loveMouseX - loveGlowX) * 0.08;
+        loveGlowY += (loveMouseY - loveGlowY) * 0.08;
+        cursorGlow.style.left = loveGlowX + 'px';
+        cursorGlow.style.top = loveGlowY + 'px';
+        loveCursorRAF = requestAnimationFrame(animateLoveGlow);
+      }
+      animateLoveGlow();
+    }
+
+    // ── Photo card 3D tilt ──
+    if (window.innerWidth >= 768 && photoCard) {
+      photoCard._onMove = function(e) {
+        var rect = photoCard.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        var rotX = ((y - rect.height / 2) / (rect.height / 2)) * -8;
+        var rotY = ((x - rect.width / 2) / (rect.width / 2)) * 8;
+        photoCard.style.transform = 'perspective(1000px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) scale3d(1.02, 1.02, 1.02)';
+      };
+      photoCard._onLeave = function() {
+        photoCard.style.transition = 'transform 0.5s ease';
+        photoCard.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        setTimeout(function() { photoCard.style.transition = ''; }, 500);
+      };
+      photoCard._onEnter = function() { photoCard.style.transition = 'none'; };
+      photoCard.addEventListener('mousemove', photoCard._onMove);
+      photoCard.addEventListener('mouseleave', photoCard._onLeave);
+      photoCard.addEventListener('mouseenter', photoCard._onEnter);
+    }
+
+    // ── Intro command typer (cycles like hero intro) ──
+    var introCommands = config.introCommands || ['hello world'];
+    var introIdx = 0, introCharIdx = 0;
+
+    function typeIntroCmd() {
+      var cmd = introCommands[introIdx];
+      if (introCharIdx < cmd.length) {
+        introTyped.textContent += cmd[introCharIdx];
+        introCharIdx++;
+        loveIntroTimer = setTimeout(typeIntroCmd, 50 + Math.random() * 30);
+      } else {
+        loveIntroTimer = setTimeout(function() {
+          introTyped.textContent = '';
+          introCharIdx = 0;
+          introIdx = (introIdx + 1) % introCommands.length;
+          loveIntroTimer = setTimeout(typeIntroCmd, 300);
+        }, 2000);
+      }
+    }
+
+    // ── Tagline typewriter (cycles "I [phrase]") ──
+    var tagPhrases = config.taglinePhrases || ['make everything beautiful.'];
+    var tagIdx = 0, tagCharIdx = 0;
+
+    function typeTagline() {
+      var phrase = tagPhrases[tagIdx];
+      if (tagCharIdx < phrase.length) {
+        typewriterEl.textContent += phrase[tagCharIdx];
+        tagCharIdx++;
+        loveTaglineTimer = setTimeout(typeTagline, 60 + Math.random() * 40);
+      } else {
+        loveTaglineTimer = setTimeout(deleteTagline, 2000);
+      }
+    }
+
+    function deleteTagline() {
+      if (typewriterEl.textContent.length > 0) {
+        typewriterEl.textContent = typewriterEl.textContent.slice(0, -1);
+        loveTaglineTimer = setTimeout(deleteTagline, 30);
+      } else {
+        tagIdx = (tagIdx + 1) % tagPhrases.length;
+        tagCharIdx = 0;
+        loveTaglineTimer = setTimeout(typeTagline, 500);
+      }
+    }
+
+    // ── Bubbles — magnetic + click ──
+    bubblesEl.innerHTML = '';
+    var defaultEmojis = ['💜','✨','🤍','💫','🫧','🌸'];
+    var bubbleEmojis = config.bubbleEmojis || defaultEmojis;
+    var notes = config.notes || [];
+
+    notes.forEach(function(note, i) {
+      var bubble = document.createElement('button');
+      bubble.className = 'love-bubble';
+      bubble.textContent = bubbleEmojis[i % bubbleEmojis.length];
+      bubble.style.animationDelay = (i * 0.08) + 's';
+
+      if (window.innerWidth >= 768) {
+        bubble.addEventListener('mousemove', function(e) {
+          var rect = bubble.getBoundingClientRect();
+          var offX = (e.clientX - rect.left - rect.width / 2) * 0.2;
+          var offY = (e.clientY - rect.top - rect.height / 2) * 0.2;
+          bubble.style.transform = 'scale(1.15) translate(' + offX + 'px, ' + offY + 'px)';
+        });
+        bubble.addEventListener('mouseleave', function() {
+          bubble.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease';
+          bubble.style.transform = 'scale(1) translate(0, 0)';
+          setTimeout(function() { bubble.style.transition = ''; }, 400);
+        });
+        bubble.addEventListener('mouseenter', function() { bubble.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease'; });
+      }
+
+      bubble.addEventListener('click', function(e) {
+        spawnBubbleBurst(e.clientX, e.clientY);
+        bubble.classList.add('popped');
+        cardText.textContent = note;
+        cardFrom.textContent = '';
+        cardEl.classList.add('show');
+        cardDrop.classList.add('show');
+      });
+      bubblesEl.appendChild(bubble);
+    });
+
+    // ── CTA actions ──
+    ctaPrimary.onclick = function() {
+      cardText.textContent = config.message || '';
+      cardFrom.textContent = config.from || '';
+      cardEl.classList.add('show');
+      cardDrop.classList.add('show');
+    };
+
+    ctaSecondary.onclick = function() {
+      var allBubbles = bubblesEl.querySelectorAll('.love-bubble:not(.popped)');
+      allBubbles.forEach(function(b, i) {
+        setTimeout(function() {
+          b.classList.add('wiggle');
+          setTimeout(function() { b.classList.remove('wiggle'); }, 600);
+        }, i * 100);
+      });
+    };
+
+    // Card close
+    function closeCard() {
+      cardEl.classList.remove('show');
+      cardDrop.classList.remove('show');
+    }
+    cardBtn.onclick = closeCard;
+    cardDrop.onclick = closeCard;
+
+    // Activate
+    overlayEl.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    startLoveCanvas();
+    startLoveEffects();
+
+    // ── Staggered reveals ──
+    var t = 300;
+    setTimeout(function() { photoFrame.classList.add('show'); }, t);
+    t += config.photo ? 600 : 0;
+    setTimeout(function() {
+      introEl.classList.add('show');
+      typeIntroCmd();
+    }, t += 200);
+    setTimeout(function() { nameEl.classList.add('show'); }, t += 300);
+    setTimeout(function() {
+      taglineEl.classList.add('show');
+      typeTagline();
+    }, t += 400);
+    setTimeout(function() { descEl.classList.add('show'); }, t += 500);
+    setTimeout(function() { ctaEl.classList.add('show'); }, t += 400);
+    setTimeout(function() {
+      hintEl.classList.add('show');
+      bubblesEl.classList.add('show');
+      closeBtn.classList.add('show');
+      if (themeToggleBtn) themeToggleBtn.classList.add('show');
+    }, t += 500);
+
+    closeBtn.onclick = function() { closeLoveOverlay(); };
+  }
+
+  // Particle constellation canvas — same as hero but with warmer palette
+  function startLoveCanvas() {
+    const canvas = document.getElementById('loveCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const count = Math.min(80, Math.floor(window.innerWidth / 15));
+    const accentRGB = [108, 99, 255];
+    const cyanRGB = [72, 191, 227];
+    const pinkRGB = [167, 139, 250];
+
+    for (let i = 0; i < count; i++) {
+      const palette = [accentRGB, cyanRGB, pinkRGB][Math.floor(Math.random() * 3)];
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 2 + 0.5,
+        color: palette
+      });
+    }
+
+    let mouse = { x: null, y: null };
+    canvas.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    canvas.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + p.color.join(',') + ',0.5)';
+        ctx.fill();
+
+        // Connect nearby particles
+        for (let j = i + 1; j < particles.length; j++) {
+          const q = particles[j];
+          const dx = p.x - q.x;
+          const dy = p.y - q.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = 'rgba(' + p.color.join(',') + ',' + (0.08 * (1 - dist / 120)) + ')';
+            ctx.stroke();
+          }
+        }
+
+        // Mouse interaction — push particles gently
+        if (mouse.x !== null) {
+          const mx = p.x - mouse.x;
+          const my = p.y - mouse.y;
+          const md = Math.sqrt(mx * mx + my * my);
+          if (md < 150) {
+            p.vx += mx / md * 0.15;
+            p.vy += my / md * 0.15;
+            // Clamp velocity
+            const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+            if (speed > 2) { p.vx *= 2 / speed; p.vy *= 2 / speed; }
+          }
+        }
+      }
+
+      loveCanvasAnim = requestAnimationFrame(draw);
+    }
+    draw();
+
+    // Handle resize
+    window.__loveCanvasResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', window.__loveCanvasResize);
+  }
+
+  // Confetti burst when a bubble is tapped
+  function spawnBubbleBurst(x, y) {
+    const container = document.getElementById('loveHearts');
+    if (!container) return;
+    const bits = ['✨','💖','💕','❤️','🩷','💫','⭐'];
+    for (let i = 0; i < 10; i++) {
+      const el = document.createElement('div');
+      el.className = 'love-burst';
+      el.textContent = bits[Math.floor(Math.random() * bits.length)];
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.style.setProperty('--dx', (Math.random() - 0.5) * 180 + 'px');
+      el.style.setProperty('--dy', (Math.random() - 0.5) * 180 + 'px');
+      el.style.fontSize = (0.6 + Math.random() * 0.8) + 'rem';
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 800);
+    }
+  }
+
+  function startLoveEffects() {
+    const container = document.getElementById('loveHearts');
+    if (!container) return;
+
+    const emojis = ['❤️','💕','💖','💗','✨','💫','🤍','💜','🩷','♥️','🫶'];
+    function spawnHeart() {
+      const el = document.createElement('div');
+      el.className = 'love-float';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.bottom = '-2rem';
+      el.style.fontSize = (0.7 + Math.random() * 1.5) + 'rem';
+      el.style.animationDuration = (5 + Math.random() * 6) + 's';
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 12000);
+    }
+    function spawnSparkle() {
+      const el = document.createElement('div');
+      el.className = 'love-sparkle';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.top = Math.random() * 100 + 'vh';
+      el.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+      el.style.width = el.style.height = (2 + Math.random() * 3) + 'px';
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 5000);
+    }
+
+    // Initial burst
+    for (let i = 0; i < 12; i++) setTimeout(spawnHeart, i * 120);
+    for (let i = 0; i < 18; i++) setTimeout(spawnSparkle, i * 80);
+
+    loveHeartsInterval = setInterval(spawnHeart, 500);
+    loveSparklesInterval = setInterval(spawnSparkle, 400);
+
+    // Slow down after initial burst
+    setTimeout(() => {
+      clearInterval(loveHeartsInterval);
+      clearInterval(loveSparklesInterval);
+      loveHeartsInterval = setInterval(spawnHeart, 900);
+      loveSparklesInterval = setInterval(spawnSparkle, 700);
+    }, 4000);
+  }
+
+  function closeLoveOverlay() {
+    var overlayEl = document.getElementById('loveOverlay');
+    var photoFrame = document.getElementById('lovePhotoWrap');
+    var photoCard = document.getElementById('lovePhotoCard');
+    overlayEl.classList.remove('active');
+    document.body.style.overflow = '';
+
+    // Reset show states
+    photoFrame.classList.remove('show');
+    if (photoCard) photoCard.style.transform = '';
+    document.getElementById('loveIntro').classList.remove('show');
+    document.getElementById('loveIntroTyped').textContent = '';
+    document.getElementById('loveName').classList.remove('show');
+    document.getElementById('loveTagline').classList.remove('show');
+    document.getElementById('loveTypewriter').textContent = '';
+    var prefixEl = document.getElementById('loveTaglinePrefix');
+    if (prefixEl) prefixEl.textContent = '';
+    document.getElementById('loveDescription').classList.remove('show');
+    document.getElementById('loveCta').classList.remove('show');
+    document.getElementById('loveHint').classList.remove('show');
+    document.getElementById('loveBubbles').classList.remove('show');
+    document.getElementById('loveClose').classList.remove('show');
+    var loveThemeBtn = document.getElementById('loveThemeToggle');
+    if (loveThemeBtn) loveThemeBtn.classList.remove('show');
+    document.getElementById('loveCard').classList.remove('show');
+    document.getElementById('loveCardDrop').classList.remove('show');
+    document.getElementById('loveHearts').innerHTML = '';
+
+    // Stop cursor glow
+    if (loveCursorRAF) { cancelAnimationFrame(loveCursorRAF); loveCursorRAF = null; }
+    if (overlayEl._onMouseMove) { overlayEl.removeEventListener('mousemove', overlayEl._onMouseMove); overlayEl._onMouseMove = null; }
+
+    // Remove photo card tilt listeners
+    if (photoCard && photoCard._onMove) { photoCard.removeEventListener('mousemove', photoCard._onMove); photoCard._onMove = null; }
+    if (photoCard && photoCard._onLeave) { photoCard.removeEventListener('mouseleave', photoCard._onLeave); photoCard._onLeave = null; }
+    if (photoCard && photoCard._onEnter) { photoCard.removeEventListener('mouseenter', photoCard._onEnter); photoCard._onEnter = null; }
+
+    // Stop typewriters
+    if (loveIntroTimer) { clearTimeout(loveIntroTimer); loveIntroTimer = null; }
+    if (loveTaglineTimer) { clearTimeout(loveTaglineTimer); loveTaglineTimer = null; }
+
+    // Stop effects
+    clearInterval(loveHeartsInterval);
+    clearInterval(loveSparklesInterval);
+    if (loveCanvasAnim) { cancelAnimationFrame(loveCanvasAnim); loveCanvasAnim = null; }
+    if (window.__loveCanvasResize) { window.removeEventListener('resize', window.__loveCanvasResize); window.__loveCanvasResize = null; }
+    document.querySelectorAll('.love-bubble').forEach(function(b) { b.classList.remove('popped'); b.classList.remove('wiggle'); });
+  }
+
   // ===== ALL COMMAND NAMES (for autocomplete) =====
   const allCommandNames = [
     // Portfolio commands (documented in help)
@@ -2579,6 +3136,12 @@ document.querySelectorAll('.btn').forEach(btn => {
           addLine('   No manual entry for ' + target, 'error');
           addLine('');
         }
+        return;
+      }
+
+      // Secret love mode — command name is configurable via love-config.json
+      if (window.__loveConfig && cmd === window.__loveConfig.command) {
+        launchLoveMode(window.__loveConfig);
         return;
       }
 
