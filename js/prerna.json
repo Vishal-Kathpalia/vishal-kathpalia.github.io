@@ -2,7 +2,7 @@
   "command": "prerna",
   "name": "Prerna",
   "photo": "images/prerna.jpg",
-  "photoTag": "♥",
+  "photoTag": "&lt;PV <span class='pv-heart'>♥</span>/&gt;",
   "introCommands": [
     "lookup prerna --result extraordinary",
     "git commit -m \"lost to a chartered accountant\"",

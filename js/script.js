@@ -1,5 +1,5 @@
 // ===== Love Mode Config (fetched async, used by terminal) =====
-fetch('js/love-config.json').then(r => r.json()).then(c => { window.__loveConfig = c; }).catch(() => {});
+fetch('js/prerna.json').then(r => r.json()).then(c => { window.__loveConfig = c; }).catch(() => {});
 
 // ===== Loading Screen =====
 window.addEventListener('load', () => {
@@ -2550,7 +2550,7 @@ document.querySelectorAll('.btn').forEach(btn => {
     }
 
     // Photo badge tag
-    photoTag.textContent = config.photoTag || '';
+    photoTag.innerHTML = config.photoTag || '';
     photoTag.style.display = config.photoTag ? '' : 'none';
 
     // Name
@@ -3139,7 +3139,7 @@ document.querySelectorAll('.btn').forEach(btn => {
         return;
       }
 
-      // Secret love mode — command name is configurable via love-config.json
+      // Secret love mode — command name is configurable via prerna.json
       if (window.__loveConfig && cmd === window.__loveConfig.command) {
         launchLoveMode(window.__loveConfig);
         return;
