@@ -1,4 +1,7 @@
 {
+  "public": false,
+  "urlParam": "prerna",
+  "showBadge": true,
   "command": "prerna",
   "name": "Prerna",
   "photo": "images/prerna.jpg",
@@ -6,18 +9,18 @@
   "introCommands": [
     "lookup prerna --result extraordinary",
     "git commit -m \"lost to a chartered accountant\"",
-    "ping composure --near prerna --status failed",
+    "ping heart --target prerna --latency 0ms",
     "sudo explain prerna --error words_insufficient"
   ],
   "taglinePrefix": "She ",
   "taglinePhrases": [
-    "turns balance sheets into poetry.",
-    "makes precision look effortless.",
-    "carries quiet grace that stops rooms.",
-    "balances worlds without breaking a sweat.",
-    "walks in and rewrites every equation."
+    "makes discipline look like an art form.",
+    "carries a quiet confidence that commands rooms.",
+    "turns ambition into something effortlessly graceful.",
+    "balances entire worlds without losing her composure.",
+    "walked into my story and rewrote the whole thing."
   ],
-  "description": "Future Chartered Accountant — the kind of person who commands respect in a boardroom and steals your composure with a single glance. Sharp mind, sharper instincts, and a presence that makes you forget what you were about to say.",
+  "description": "Future Chartered Accountant with the kind of quiet discipline most people only talk about. Sharp, composed, and effortlessly grounded — someone who makes everyone around her want to do better. Including me. Especially me.",
   "ctaPrimary": "Read My Heart",
   "ctaSecondary": "Things I Never Said",
   "greeting": [
@@ -34,17 +37,17 @@
     "secretLine1": "confession = \"the thing I never said out loud\";",
     "secretLine2": "shootMyShot(confession); // 🚀"
   },
-  "message": "Some people walk into your life and rearrange every priority you thought you had. You did that — without trying, without knowing, without permission.",
-  "from": "— from someone still learning how to say your name without smiling",
+  "message": "I sometimes think about who I was before you — and honestly, that life doesn't even compare. You changed the way I feel, the way I see the world, and the way I understand what love truly means.\n\nYou didn't just come into my life — you gave it a direction it didn't know it was missing.\n\nI don't want something temporary with you. I don't want something that only works when it's easy. I want something real, something honest, something that only grows stronger with every season we walk through together. I want us — not for now, not for a while — for life.\n\nI love you, Prerna ❤️",
+  "from": "— with all my love, today and always 💜",
   "hint": "each one holds something I never said out loud",
   "cardBtnText": "close 💜",
   "notes": [
-    "you carry yourself like someone who already knows her worth — and it's magnetic",
-    "I rehearsed saying hi forty-seven times and still almost forgot how words work",
-    "you walked in and even my playlist switched to love songs on its own",
-    "the way you focus when you work — I could watch that quiet intensity forever",
-    "my friends are tired of hearing about you, but I physically cannot stop",
-    "you make ambition look graceful and I haven't recovered since"
+    "you became my favorite constant — not the loudest part of my life, but the one that quietly makes everything else make sense",
+    "there's a quiet brilliance in the way you carry yourself — unhurried, unfazed, and completely unmissable",
+    "you brought a rhythm to my days I didn't know was missing — everything just flows better with you in it",
+    "the way you show up for your CA every single day — that kind of discipline is rare, and watching it made me realize I wasn't just impressed, I was already falling",
+    "not sure when it happened, but you went from someone on my mind to someone I can't imagine my life without",
+    "knowing you feel it too — that quiet certainty is the most peaceful thing I've ever known"
   ],
   "bubbleEmojis": ["💜", "✨", "🎵", "🤍", "💫", "🫧"]
 }

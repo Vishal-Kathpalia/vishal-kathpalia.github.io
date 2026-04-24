@@ -1,5 +1,5 @@
 // ===== Love Mode Config (fetched async, used by terminal) =====
-fetch('js/prerna.json').then(r => r.json()).then(c => { window.__loveConfig = c; }).catch(() => {});
+fetch('js/prerna.json').then(r => r.json()).then(c => { window.__loveConfig = c; if (window.__onLoveConfigReady) window.__onLoveConfigReady(c); }).catch(() => {});
 
 // ===== Loading Screen =====
 window.addEventListener('load', () => {
@@ -3156,6 +3156,10 @@ document.querySelectorAll('.btn').forEach(btn => {
       }
     }
   });
+
+  // Expose for public access mode
+  window.__launchLoveMode = launchLoveMode;
+  window.__activateLoveOverlay = activateLoveOverlay;
 })();
 
 // ===== Terminal Discovery Toast =====
@@ -3540,5 +3544,40 @@ function triggerConfetti() {
         nameInput.classList.remove('valid', 'invalid');
       }
     });
+  }
+})();
+
+// ===== Love Mode Public Access (config-gated) =====
+(function initLovePublic() {
+  function activate(config) {
+    if (!config || !config.public) return;
+
+    // URL parameter — skip terminal animation, go straight to overlay
+    var param = config.urlParam || 'prerna';
+    if (new URLSearchParams(window.location.search).has(param)) {
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          if (window.__activateLoveOverlay) window.__activateLoveOverlay(config);
+        }, 1600);
+      });
+    }
+
+    // Floating badge on the site
+    if (config.showBadge !== false) {
+      var badge = document.createElement('button');
+      badge.className = 'love-public-badge';
+      badge.setAttribute('aria-label', 'Something special');
+      badge.innerHTML = '<span class="love-badge-tag">&lt;</span>PV <span class="love-badge-heart">\u2665</span><span class="love-badge-tag">/&gt;</span>';
+      badge.addEventListener('click', function() {
+        if (window.__activateLoveOverlay) window.__activateLoveOverlay(config);
+      });
+      document.body.appendChild(badge);
+    }
+  }
+
+  if (window.__loveConfig) {
+    activate(window.__loveConfig);
+  } else {
+    window.__onLoveConfigReady = activate;
   }
 })();

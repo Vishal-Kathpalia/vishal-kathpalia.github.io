@@ -1050,10 +1050,10 @@ body:hover .cursor-glow { opacity: 1; }
   bottom: 14px;
   right: 14px;
   z-index: 3;
-  font-family: var(--font-heading);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 1.5px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
   color: #fff;
   background: rgba(108, 99, 255, 0.6);
   backdrop-filter: blur(10px);
@@ -4832,8 +4832,10 @@ body.comic-sans-mode * {
   border: 1px solid rgba(108, 99, 255, 0.15);
   border-radius: var(--radius);
   padding: 2.5rem 2.5rem 2rem;
-  max-width: 420px;
+  max-width: 500px;
   width: calc(100vw - 3rem);
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
   text-align: center;
   opacity: 0;
   visibility: hidden;
@@ -4858,6 +4860,7 @@ body.comic-sans-mode * {
   line-height: 1.8;
   margin-bottom: 0.75rem;
   font-style: italic;
+  white-space: pre-line;
 }
 
 .love-card-from {
@@ -5016,4 +5019,75 @@ body.comic-sans-mode * {
   .love-card-text { font-size: 0.9rem; }
   .love-close { top: 1rem; right: 1rem; width: 38px; height: 38px; }
   .love-theme-toggle { top: 1rem; left: 1rem; width: 38px; height: 38px; }
+}
+
+/* ===== Love Mode Public Badge ===== */
+.love-public-badge {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 2rem;
+  z-index: 199;
+  height: 48px;
+  padding: 0 1.2rem 0 0.9rem;
+  border-radius: 24px;
+  border: none;
+  background: var(--gradient);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 24px rgba(108, 99, 255, 0.4), 0 0 60px rgba(108, 99, 255, 0.15);
+  transition: all var(--transition);
+  animation: loveBadgeFloat 3s ease-in-out infinite, loveBadgeGlow 2s ease-in-out infinite;
+}
+
+@keyframes loveBadgeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes loveBadgeGlow {
+  0%, 100% { box-shadow: 0 4px 24px rgba(108, 99, 255, 0.4), 0 0 60px rgba(108, 99, 255, 0.15); }
+  50% { box-shadow: 0 6px 32px rgba(108, 99, 255, 0.6), 0 0 80px rgba(108, 99, 255, 0.25), 0 0 120px rgba(72, 191, 227, 0.1); }
+}
+
+.love-public-badge:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 40px rgba(108, 99, 255, 0.6), 0 0 80px rgba(108, 99, 255, 0.3);
+}
+
+.love-public-badge:active {
+  transform: translateY(0) scale(0.97);
+}
+
+[data-theme="light"] .love-public-badge {
+  box-shadow: 0 4px 20px rgba(108, 99, 255, 0.25), 0 0 40px rgba(108, 99, 255, 0.08);
+}
+
+[data-theme="light"] .love-public-badge:hover {
+  box-shadow: 0 8px 30px rgba(108, 99, 255, 0.35), 0 0 50px rgba(108, 99, 255, 0.12);
+}
+
+.love-badge-heart {
+  color: #ff4444;
+  display: inline-block;
+  font-size: 1.1em;
+  animation: loveBadgeHeartbeat 1s ease-in-out infinite;
+}
+
+.love-badge-tag { opacity: 0.7; }
+
+@keyframes loveBadgeHeartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
+@media (max-width: 768px) {
+  .love-public-badge { bottom: 4.5rem; right: 1.25rem; height: 44px; padding: 0 1rem 0 0.7rem; font-size: 0.78rem; }
 }
