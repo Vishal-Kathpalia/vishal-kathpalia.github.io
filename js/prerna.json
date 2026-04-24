@@ -1,5 +1,5 @@
 {
-  "public": true,
+  "public": false,
   "urlParam": "prerna",
   "showBadge": true,
   "command": "prerna",
